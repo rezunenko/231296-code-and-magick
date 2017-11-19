@@ -47,12 +47,46 @@ var Paper = function (x, y, width, height, ctx) {
       _ctx.fillStyle = '#000';
       _ctx.fillText('Ура вы победили!', _x + 20, _y + 30);
       _ctx.fillText('Список результатов:', _x + 20, _y + 50);
+    },
+    renderHistogram: function (names, times) {
+      var histogramHeight = 150;
+      var columnWidth = 40;
+      var indent = 50;
+      var userColumnColor = 'rgb(255, 0, 0)';
+      var opponentColumnColor = 'rgb(0, 0, 255)';
+      var step = histogramHeight / getMaxValue(times);
+      var initialX = _x;
+      var initialY = _y + _height - 30;
+      for (var i = 0; i < times.length; i++) {
+        _ctx.fillStyle = i ? opponentColumnColor : userColumnColor;
+        _ctx.globalAlpha = i ? getRandomValue(0.3, 1) : 1;
+        _ctx.fillRect(initialX + columnWidth * i + indent * (i + 1), initialY, columnWidth, -times[i] * step);
+      }
+      _ctx.globalAlpha = 1;
     }
   };
 };
+
+function getMaxValue(arr) {
+  var max = 0;
+
+  arr.forEach(function (item) {
+    if (item > max) {
+      max = item;
+    }
+  });
+
+  return max;
+}
+
+function getRandomValue(min, max) {
+
+  return Math.random() * (max - min) + min;
+}
 
 window.renderStatistics = function (ctx, names, times) {
   var paper = new Paper(100, 10, 420, 270, ctx);
   paper.setBorder(5);
   paper.render(ctx);
+  paper.renderHistogram(names, times);
 };
