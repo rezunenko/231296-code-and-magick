@@ -57,10 +57,16 @@ var Paper = function (x, y, width, height, ctx) {
       var step = histogramHeight / getMaxValue(times);
       var initialX = _x;
       var initialY = _y + _height - 30;
+      var isCurrentUser;
       for (var i = 0; i < times.length; i++) {
-        _ctx.fillStyle = i ? opponentColumnColor : userColumnColor;
-        _ctx.globalAlpha = i ? getRandomValue(0.3, 1) : 1;
+        isCurrentUser = names[i] === 'Вы';
+        _ctx.fillStyle = isCurrentUser ? userColumnColor : opponentColumnColor;
+        _ctx.globalAlpha = isCurrentUser ? 1 : getRandomValue(0.3, 1);
         _ctx.fillRect(initialX + columnWidth * i + indent * (i + 1), initialY, columnWidth, -times[i] * step);
+        _ctx.globalAlpha = 1;
+        _ctx.fillStyle = '#000';
+        _ctx.fillText(names[i], initialX + columnWidth * i + indent * (i + 1), initialY + 20);
+        _ctx.fillText(times[i].toFixed(0), initialX + columnWidth * i + indent * (i + 1), initialY - times[i] * step - 10);
       }
       _ctx.globalAlpha = 1;
     }
