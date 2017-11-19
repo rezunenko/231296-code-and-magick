@@ -1,23 +1,23 @@
 'use strict';
 
-var Paper = function (x, y, width, height, ctx) {
-  var _x = x || 0;
-  var _y = y || 0;
-  var _width = width || 0;
-  var _height = height || 0;
-  var _ctx;
-  var _border = {};
+var Paper = function (ctx, params) {
+  var _ctx = null;
   if (!ctx) {
     throw Error('Not valid CTX param');
   } else {
     _ctx = ctx;
   }
+  var _x = params.x || 0;
+  var _y = params.y || 0;
+  var _width = params.width || 0;
+  var _height = params.height || 0;
+  var _borderWidth = params.borderWidth || 0;
 
-  function renderBorder() {
-    var borderX = _x - _border.width;
-    var borderY = _y - _border.width;
-    var borderWidth = _width + 2 * _border.width;
-    var borderHeight = _height + 2 * _border.width;
+  function _renderBorder() {
+    var borderX = _x - _borderWidth;
+    var borderY = _y - _borderWidth;
+    var borderRectWidth = _width + 2 * _borderWidth;
+    var borderRectHeight = _height + 2 * _borderWidth;
     var grd = _ctx.createLinearGradient(0, 0, 0, _height);
     grd.addColorStop(0, 'lightgreen');
     grd.addColorStop(1, 'blue');
@@ -26,19 +26,15 @@ var Paper = function (x, y, width, height, ctx) {
     _ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
     _ctx.shadowOffsetX = 10;
     _ctx.shadowOffsetY = 10;
-    _ctx.fillRect(borderX, borderY, borderWidth, borderHeight);
+    _ctx.fillRect(borderX, borderY, borderRectWidth, borderRectHeight);
     _ctx.shadowOffsetX = 0;
     _ctx.shadowOffsetY = 0;
   }
 
   return {
-    setBorder: function (borderWidth, color) {
-      _border.width = borderWidth;
-      _border.color = color;
-    },
     render: function () {
-      if (_border.width) {
-        renderBorder(_ctx);
+      if (_borderWidth > 0) {
+        _renderBorder(_ctx);
       }
 
       _ctx.fillStyle = '#fff';
@@ -54,7 +50,7 @@ var Paper = function (x, y, width, height, ctx) {
       var indent = 50;
       var userColumnColor = 'rgb(255, 0, 0)';
       var opponentColumnColor = 'rgb(0, 0, 255)';
-      var step = histogramHeight / getMaxValue(times);
+      var step = histogramHeight / Math.max.apply(null, times);
       var initialX = _x;
       var initialY = _y + _height - 30;
       var isCurrentUser;
@@ -69,21 +65,9 @@ var Paper = function (x, y, width, height, ctx) {
         _ctx.fillText(times[i].toFixed(0), initialX + columnWidth * i + indent * (i + 1), initialY - times[i] * step - 10);
       }
       _ctx.globalAlpha = 1;
-    }
+    },
   };
 };
-
-function getMaxValue(arr) {
-  var max = 0;
-
-  arr.forEach(function (item) {
-    if (item > max) {
-      max = item;
-    }
-  });
-
-  return max;
-}
 
 function getRandomValue(min, max) {
 
@@ -91,8 +75,14 @@ function getRandomValue(min, max) {
 }
 
 window.renderStatistics = function (ctx, names, times) {
-  var paper = new Paper(100, 10, 420, 270, ctx);
-  paper.setBorder(5);
-  paper.render(ctx);
+  var params = {
+    x: 100,
+    y: 10,
+    width: 420,
+    height: 270,
+    borderWidth: 5
+  };
+  var paper = new Paper(ctx, params);
+  paper.render();
   paper.renderHistogram(names, times);
 };
