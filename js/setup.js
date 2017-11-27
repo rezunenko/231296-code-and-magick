@@ -7,20 +7,21 @@ var COAT_COLORS = ['rgb(101, 137, 164)', 'rgb(241, 43, 107)', 'rgb(146, 100, 161
 var EYES_COLORS = ['rgb(101, 137, 164)', 'rgb(241, 43, 107)', 'rgb(146, 100, 161)', 'rgb(56, 159, 117)',
   'rgb(215, 210, 55)', 'rgb(0, 0, 0)'];
 
-function getRandomValue(max, min) {
-  min = min || 0;
-  max = max || 1;
+function getRandomValue() {
+  var argumentList = [].slice.call(arguments);
+  argumentList[0] = argumentList[0] || 0;
+  argumentList[1] = argumentList[1] || 0;
+  var min = Math.min(argumentList[0], argumentList[1]);
+  var max = Math.max(argumentList[0], argumentList[1]);
 
   return Math.round((max - min) * Math.random() + min);
 }
 
 function getRandomArrayItem(arr) {
-  arr = arr || [];
-
-  return arr[getRandomValue(arr.length - 1)];
+  return Array.isArray(arr) && arr.length > 0 ? arr[getRandomValue(arr.length - 1)] : 0;
 }
 
-function getWizard(count) {
+function getWizards(count) {
   var wizards = [];
   count = count || 0;
 
@@ -35,23 +36,30 @@ function getWizard(count) {
   return wizards;
 }
 
-function renderWizard(wizard, template) {
-  template = template.cloneNode(true);
-  template.querySelector('.setup-similar-label').textContent = wizard.name;
-  template.querySelector('.wizard-coat').style.fill = wizard.coatColor;
-  template.querySelector('.wizard-eyes').style.fill = wizard.eyesColor;
+function setRenderWizardTemplate(template) {
+  var templateInClosure = template;
 
-  return template;
+  return function (wizard) {
+    var clonedTemplate = templateInClosure.cloneNode(true);
+    clonedTemplate.querySelector('.setup-similar-label').textContent = wizard.name;
+    clonedTemplate.querySelector('.wizard-coat').style.fill = wizard.coatColor;
+    clonedTemplate.querySelector('.wizard-eyes').style.fill = wizard.eyesColor;
+
+    return clonedTemplate;
+  };
 }
+
 
 function renderWizardList() {
   var WIZARD_COUNT = 4;
-  var wizards = getWizard(WIZARD_COUNT);
+  var wizards = getWizards(WIZARD_COUNT);
   var wizardTemplate = document.querySelector('#similar-wizard-template').content.querySelector('.setup-similar-item');
   var fragment = document.createDocumentFragment();
 
+  var renderWizard = setRenderWizardTemplate(wizardTemplate);
+
   for (var i = 0; i < WIZARD_COUNT; i++) {
-    fragment.appendChild(renderWizard(wizards[i], wizardTemplate));
+    fragment.appendChild(renderWizard(wizards[i]));
   }
 
   document.querySelector('.setup-similar-list').appendChild(fragment);
