@@ -18,7 +18,7 @@ function getRandomValue() {
 }
 
 function getRandomArrayItem(arr) {
-  return Array.isArray(arr) && arr.length > 0 ? arr[getRandomValue(arr.length - 1)] : 0;
+  return Array.isArray(arr) && arr.length > 0 ? arr[getRandomValue(arr.length - 1)] : null;
 }
 
 function getWizards(count) {
