@@ -1,11 +1,15 @@
 'use strict';
-
+var ESC_KEYCODE = 27;
+var ENTER_KEYCODE = 13;
 var FIRST_NAMES = ['Иван', 'Хуан', 'Себастьян', 'Мария', 'Кристоф', 'Виктор', 'Юлия', 'Люпита', 'Вашингтон'];
 var LAST_NAMES = ['да Марья', 'Верон', 'Мирабелла', 'Вальц', 'Онопко', 'Топольницкая', 'Нионго', 'Ирвинг'];
 var COAT_COLORS = ['rgb(101, 137, 164)', 'rgb(241, 43, 107)', 'rgb(146, 100, 161)', 'rgb(56, 159, 117)',
   'rgb(215, 210, 55)', 'rgb(0, 0, 0)'];
 var EYES_COLORS = ['rgb(101, 137, 164)', 'rgb(241, 43, 107)', 'rgb(146, 100, 161)', 'rgb(56, 159, 117)',
   'rgb(215, 210, 55)', 'rgb(0, 0, 0)'];
+
+var setupOpen = document.querySelector('.setup-open');
+var setupClose = document.querySelector('.setup-close');
 
 function getRandomValue() {
   var argumentList = [].slice.call(arguments);
@@ -66,4 +70,31 @@ function renderWizardList() {
   document.querySelector('.setup-similar').classList.remove('hidden');
 }
 
+function onPopupEscPress(e) {
+  if (e.keyCode === ESC_KEYCODE) {
+    onCloseSetup();
+  }
+}
+
+function onCloseSetup() {
+  document.querySelector('.setup').classList.add('hidden');
+}
+
+function onShowSetup() {
+  document.querySelector('.setup').classList.remove('hidden');
+  document.addEventListener('keydown', onPopupEscPress);
+}
+
+setupOpen.addEventListener('click', onShowSetup);
+setupOpen.addEventListener('keydown', function (e) {
+  if (e.keyCode === ENTER_KEYCODE) {
+    onShowSetup();
+  }
+});
+setupClose.addEventListener('click', onCloseSetup);
+setupClose.addEventListener('keydown', function (e) {
+  if (e.keyCode === ENTER_KEYCODE) {
+    onCloseSetup();
+  }
+});
 renderWizardList();
