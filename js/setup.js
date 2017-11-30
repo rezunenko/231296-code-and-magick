@@ -7,9 +7,18 @@ var COAT_COLORS = ['rgb(101, 137, 164)', 'rgb(241, 43, 107)', 'rgb(146, 100, 161
   'rgb(215, 210, 55)', 'rgb(0, 0, 0)'];
 var EYES_COLORS = ['rgb(101, 137, 164)', 'rgb(241, 43, 107)', 'rgb(146, 100, 161)', 'rgb(56, 159, 117)',
   'rgb(215, 210, 55)', 'rgb(0, 0, 0)'];
+var SETUP_COAT_COLORS = COAT_COLORS.slice();
+var SETUP_FIREBALL_COLORS = ['#ee4830', '#30a8ee', '#5ce6c0', '#e848d5', '#e6e848'];
+var SETUP_EYES_COLORS = ['black', 'red', 'blue', 'yellow', 'green'];
 
 var setupOpen = document.querySelector('.setup-open');
 var setupClose = document.querySelector('.setup-close');
+var setupCoat = document.querySelector('.setup-wizard .wizard-coat');
+var setupEyes = document.querySelector('.setup-wizard .wizard-eyes');
+var setupFireball = document.querySelector('.setup-fireball-wrap');
+var inputCoat = document.querySelector('input[name="coat-color"]');
+var inputEyes = document.querySelector('input[name="eyes-color"]');
+var inputFireball = document.querySelector('input[name="fireball-color"]');
 
 function getRandomValue() {
   var argumentList = [].slice.call(arguments);
@@ -71,6 +80,12 @@ function renderWizardList() {
 }
 
 function onPopupEscPress(e) {
+  if (e.target.classList.contains('setup-user-name')) {
+    e.stopPropagation();
+
+    return;
+  }
+
   if (e.keyCode === ESC_KEYCODE) {
     onCloseSetup();
   }
@@ -85,6 +100,24 @@ function onShowSetup() {
   document.addEventListener('keydown', onPopupEscPress);
 }
 
+function onChangeCoatColor() {
+  var color = getRandomArrayItem(SETUP_COAT_COLORS);
+  setupCoat.style.fill = color;
+  inputCoat.value = color;
+}
+
+function onChangeEyesColor() {
+  var color = getRandomArrayItem(SETUP_EYES_COLORS);
+  setupEyes.style.fill = color;
+  inputEyes.value = color;
+}
+
+function onChangeFireballColor() {
+  var color = getRandomArrayItem(SETUP_FIREBALL_COLORS);
+  setupFireball.style.background = color;
+  inputFireball.value = color;
+}
+
 setupOpen.addEventListener('click', onShowSetup);
 setupOpen.addEventListener('keydown', function (e) {
   if (e.keyCode === ENTER_KEYCODE) {
@@ -97,4 +130,8 @@ setupClose.addEventListener('keydown', function (e) {
     onCloseSetup();
   }
 });
+
+setupCoat.addEventListener('click', onChangeCoatColor);
+setupEyes.addEventListener('click', onChangeEyesColor);
+setupFireball.addEventListener('click', onChangeFireballColor);
 renderWizardList();
